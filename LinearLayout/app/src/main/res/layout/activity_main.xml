@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/editTextCurrentAge"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp" />
 
@@ -39,8 +39,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/calculate_text"
-        android:id="@+id/button"
+        android:id="@+id/buttonCalculate"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text=""
+        android:id="@+id/textViewResults"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp" />
 
 </LinearLayout>
