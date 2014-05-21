@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Movie Finder</string>
+    <string name="button_search_zip">Search</string>
+    <string name="hint_enter_zipcode">Enter your ZIP Code</string>
+
+</resources>
