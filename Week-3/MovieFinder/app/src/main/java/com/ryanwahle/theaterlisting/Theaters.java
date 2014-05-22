@@ -7,20 +7,29 @@
 
 package com.ryanwahle.theaterlisting;
 
+import android.app.Activity;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Created by ryanwahle on 5/14/14.
  */
 
 // Static Class that gets a list of movies from a specific zipcode
-public class Theaters {
+public class Theaters extends Activity {
+
+
     public static Movie[] getTheaterList(String zipcode) {
         // Grab the JSON Data from remote source
+
+
+
         String theaterJSONData = getTheaterJSONData(zipcode);
         Movie[] movieObjects = new Movie[0];
 
@@ -40,7 +49,7 @@ public class Theaters {
                 movieObjects[index].showtimes = movieListJSONArray.getJSONObject(index).getString("showtimes");
                 movieObjects[index].theater_name = movieListJSONArray.getJSONObject(index).getString("theater_name");
                 movieObjects[index].length_in_minutes = movieListJSONArray.getJSONObject(index).getInt("length_in_minutes");
-                movieObjects[index].rating = Rating.R;
+                //movieObjects[index].rating = Rating.R;
             }
 
 
@@ -56,6 +65,31 @@ public class Theaters {
     // This will be the method that retrieves the data from the remote source.
     // Since we do not have a remote source yet, this function creates fake JSON data.
     private static String getTheaterJSONData(String zipcode) {
+
+/*
+            String json = null;
+            try {
+
+                InputStream is = getAssets().open("moviedata.json");
+
+
+                int size = is.available();
+
+                byte[] buffer = new byte[size];
+
+                is.read(buffer);
+
+                is.close();
+
+                json = new String(buffer, "UTF-8");
+
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                return null;
+            }
+           // return json;
+*/
 
         JSONObject theaterJSONData = new JSONObject();
         try {

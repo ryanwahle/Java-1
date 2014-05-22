@@ -16,7 +16,7 @@ public class Movie {
     public String   showtimes;
     public String   theater_name;
     public int      length_in_minutes;
-    public Rating   rating;
+    //public Rating   rating;
 
     public Movie() {
         Log.e("Movie Class:", "Object Created");

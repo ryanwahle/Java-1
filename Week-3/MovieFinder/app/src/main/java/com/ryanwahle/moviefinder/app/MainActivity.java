@@ -20,8 +20,16 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import com.ryanwahle.theaterlisting.Movies;
 import com.ryanwahle.theaterlisting.Theaters;
 import com.ryanwahle.theaterlisting.Movie;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends Activity {
     String[]    movieNamesList;
@@ -35,7 +43,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mContext = this;
+        Movies moviesData = new Movies(this);
+
+        for (Movie movie : moviesData.movieList) {
+            Log.v("MAIN", "Movie Name: " + movie.movie_name);
+        }
+
+
+        //Log.v("Movies", "Length of moviesData.movieList: " + moviesData.movieList.length);
 
         // Setup the onClick for the Search button
         buttonSearch = (Button) findViewById(R.id.buttonSearch);
@@ -50,7 +65,6 @@ public class MainActivity extends Activity {
 
                 // Load the spinner
                 loadMovieList(editTextZipcode.getText().toString());
-
             }
         });
 
@@ -86,7 +100,7 @@ public class MainActivity extends Activity {
                 movieDetailsList[2] = "Times: " + movieList[position].showtimes;
                 movieDetailsList[3] = "Theater: " + movieList[position].theater_name;
                 movieDetailsList[4] = "Length: " + movieList[position].length_in_minutes + " minutes";
-                movieDetailsList[5] = "Rated: " + movieList[position].rating;
+                //movieDetailsList[5] = "Rated: " + movieList[position].rating;
 
                 ArrayAdapter<String> listAdaptor = new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, movieDetailsList);
                 movieDetailsListView.setAdapter(listAdaptor);
