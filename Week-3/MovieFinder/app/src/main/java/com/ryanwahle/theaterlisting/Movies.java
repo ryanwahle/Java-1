@@ -1,3 +1,10 @@
+/*
+    Ryan Wahle
+    Java 1 - 1405
+    Full Sail University
+    May 22, 2014
+ */
+
 package com.ryanwahle.theaterlisting;
 
 import android.content.Context;
@@ -7,14 +14,16 @@ import com.ryanwahle.moviefinder.app.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Movies {
     public Movie [] movieList;
     private String jsonDataRaw;
 
-    public Movies (Context mContext) {
-        jsonDataRaw = mContext.getResources().getString(R.string.json_data);
-
+    public Movies (Context mContext, String jsonDataString) {
+        //jsonDataRaw = mContext.getResources().getString(R.string.json_data);
+        Log.v("MOVIES JSON", jsonDataString);
+        jsonDataRaw = new String(jsonDataString);
         parseJSON();
 
     }
@@ -28,11 +37,37 @@ public class Movies {
 
             for (int i = 0; i < jsonObjectLength; i++) {
                 movieList[i] = new Movie();
+
+                // Set the Movie Name
                 movieList[i].movie_name = movieListJSONArray.getJSONObject(i).getString("title");
+
+                // Set the Runtime Length
+                try {
+                    movieList[i].movie_length = movieListJSONArray.getJSONObject(i).getString("runTime");
+                } catch (JSONException ex) {
+                    movieList[i].movie_length = "Unknown";
+                }
+
+                // Set the Rating
+                try {
+                    JSONArray jsonRatingArray = movieListJSONArray.getJSONObject(i).getJSONArray("ratings");
+                    for (int indexRating = 0; indexRating < jsonRatingArray.length(); indexRating++) {
+                        movieList[i].rating = jsonRatingArray.getJSONObject(indexRating).getString("code");
+                    }
+                } catch (JSONException ex) {
+                    movieList[i].rating = "Not Rated";
+                }
+
+                // Set the Showtimes
+                try {
+                    JSONArray jsonShowtimesArray = movieListJSONArray.getJSONObject(i).getJSONArray("showtimes");
+                    for (int indexShowtimes = 0; indexShowtimes < jsonShowtimesArray.length(); indexShowtimes++) {
+                        movieList[i].showtimes = String.format("%s | %s", movieList[i].showtimes, jsonShowtimesArray.getJSONObject(indexShowtimes).getString("dateTime"));
+                    }
+                } catch (JSONException ex) {
+                    movieList[i].showtimes = "No Showtimes";
+                }
             }
-
-            Log.v("JSON", String.format("Number of JSON Objects: %d", movieListJSONArray.length()));
-
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
