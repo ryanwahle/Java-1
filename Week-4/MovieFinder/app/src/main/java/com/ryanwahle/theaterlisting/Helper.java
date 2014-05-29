@@ -1,5 +1,14 @@
 package com.ryanwahle.theaterlisting;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -37,5 +46,50 @@ public class Helper {
         // Format: "(-----------HH-MM")
 
         return String.format("%c%c:%c%c", remoteSourceShowtime.charAt(11), remoteSourceShowtime.charAt(12), remoteSourceShowtime.charAt(14), remoteSourceShowtime.charAt(15));
+    }
+
+    static public boolean isNetworkAvailable (Context mContext)
+    {
+        boolean returnCode = false;
+
+        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni != null) {
+            if (ni.isConnected()) {
+                returnCode = true;
+            }
+        }
+
+        return returnCode;
+    }
+
+    public static String getRemoteData(URL url) {
+        String response = "";
+        URLConnection connection = null;
+
+        try {
+            connection = url.openConnection();
+
+
+            BufferedInputStream data = new BufferedInputStream(connection.getInputStream());
+
+            byte[] contentBytes = new byte[1024];
+            int bytesRead = 0;
+            StringBuilder responseBuffer = new StringBuilder();
+
+            while ((bytesRead = data.read(contentBytes)) != -1) {
+                response = new String(contentBytes, 0, bytesRead);
+                responseBuffer.append(response);
+            }
+
+            response = responseBuffer.toString();
+            Log.v("RESPONSE", response);
+
+        } catch (IOException e) {
+            response = "Something happened and we didn't get the info";
+            Log.e("getResponse", "Something went wrong");
+        }
+
+        return response;
     }
 }

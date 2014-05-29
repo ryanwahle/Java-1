@@ -8,21 +8,16 @@
 package com.ryanwahle.theaterlisting;
 
 import android.content.Context;
-import android.util.Log;
-
-import com.ryanwahle.moviefinder.app.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Movies {
     public Movie [] movieList;
     private String jsonDataRaw;
 
     public Movies (Context mContext, String jsonDataString) {
-        //jsonDataRaw = mContext.getResources().getString(R.string.json_data);
-        Log.v("MOVIES JSON", jsonDataString);
+        //Log.v("MOVIES JSON", jsonDataString);
         jsonDataRaw = new String(jsonDataString);
         parseJSON();
 
@@ -61,16 +56,40 @@ public class Movies {
                     movieList[i].rating = "Not Rated";
                 }
 
-                // Set the Showtimes
                 try
                 {
                     JSONArray jsonShowtimesArray = movieListJSONArray.getJSONObject(i).getJSONArray("showtimes");
                     for (int indexShowtimes = 0; indexShowtimes < jsonShowtimesArray.length(); indexShowtimes++) {
+                        String theaterName = jsonShowtimesArray.getJSONObject(indexShowtimes).getJSONObject("theatre").getString("name");
                         String showtime = jsonShowtimesArray.getJSONObject(indexShowtimes).getString("dateTime");
-                        movieList[i].showtimes = String.format("%s | %s", movieList[i].showtimes, Helper.convertRemoteSourceMovieShowtimeToProperString(showtime));
+
+                        if (movieList[i].showtimes.isEmpty()) {
+                            Showtimes newShowtimeTheater = new Showtimes();
+                            newShowtimeTheater.theaterName = theaterName;
+                            newShowtimeTheater.movieShowtimes = Helper.convertRemoteSourceMovieShowtimeToProperString(showtime);
+
+                            movieList[i].showtimes.add(newShowtimeTheater);
+                        } else {
+                            boolean didFindTheater = false;
+
+                            for (Showtimes showtimeObject : movieList[i].showtimes) {
+                                if (showtimeObject.theaterName.equals(theaterName)) {
+                                    showtimeObject.movieShowtimes = String.format("%s %s", showtimeObject.movieShowtimes, Helper.convertRemoteSourceMovieShowtimeToProperString(showtime));
+                                    didFindTheater = true;
+                                }
+                            }
+
+                            if (!didFindTheater) {
+                                Showtimes newShowtimeTheater = new Showtimes();
+                                newShowtimeTheater.theaterName = theaterName;
+                                newShowtimeTheater.movieShowtimes = Helper.convertRemoteSourceMovieShowtimeToProperString(showtime);
+
+                                movieList[i].showtimes.add(newShowtimeTheater);
+                            }
+                        }
                     }
                 } catch (JSONException ex) {
-                    movieList[i].showtimes = "No Showtimes";
+
                 }
             }
         } catch (JSONException ex) {
