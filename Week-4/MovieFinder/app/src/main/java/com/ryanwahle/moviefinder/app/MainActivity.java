@@ -8,6 +8,7 @@
 package com.ryanwahle.moviefinder.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,11 +58,8 @@ public class MainActivity extends Activity {
 
 
         if (Helper.isNetworkAvailable(mContext)) {
-            Log.v("MAIN", "Network Available");
             Toast.makeText(mContext, "Network Available", Toast.LENGTH_SHORT).show();
-
         } else {
-            Log.v("MAIN", "Network Unavailable");
             Toast.makeText(mContext, "Network Not Available", Toast.LENGTH_LONG).show();
         }
 
@@ -72,27 +70,61 @@ public class MainActivity extends Activity {
         buttonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String zipcode = editTextZipcode.getText().toString();
+                if (!Helper.isNetworkAvailable(mContext)) {
+                    showAlert(getString(R.string.alertNoInternetConnection));
+                    return;
+                }
+
+                String zipcode = String.format("%s", editTextZipcode.getText());
+                String searchDate = String.format("%s", editTextRequestedDate.getText());
+
+                // Check to make sure zipcode is in proper format
+                if (zipcode.isEmpty() || (zipcode.length() != 5)) {
+                    showAlert(getString(R.string.alertInvalidZipcode));
+                    return;
+                }
+
+                if (searchDate.isEmpty() || (searchDate.length() != 10) || (searchDate.charAt(4) != '-') || (searchDate.charAt(7) != '-')) {
+                    showAlert(getString(R.string.alertInvalidDate));
+                    return;
+                }
 
                 // Close the keyboard if it is up. Found this by searching google.com
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(editTextZipcode.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(editTextRequestedDate.getWindowToken(), 0);
 
                 // Get the JSON Data
-                new getData().execute("http://data.tmsapi.com/v1/movies/showings?startDate=" + editTextRequestedDate.getText().toString() + "&zip=" + zipcode + "&api_key=uzufrrp7tnztmej3d37zns85");
+                new getData().execute("http://data.tmsapi.com/v1/movies/showings?startDate=" + searchDate + "&zip=" + zipcode + "&api_key=uzufrrp7tnztmej3d37zns85");
             }
         });
 
 
     }
 
+
+    private void showAlert (String alertText) {
+        AlertDialog.Builder alertBox = new AlertDialog.Builder(this);
+        alertBox.setTitle(getString(R.string.alertTitle));
+        alertBox.setMessage(alertText);
+        alertBox.setPositiveButton("OK", null);
+        alertBox.setCancelable(false);
+        alertBox.create().show();
+    }
+
     // Get a list of movies from theaters in a specific zip code
     private void loadMovieList (String jsonDataString) {
 
-        Movies moviesData = new Movies(mContext, jsonDataString);
+        final Movies moviesData = new Movies(mContext, jsonDataString);
 
         final Movie[] movieList = moviesData.movieList;
-        movieNamesList = new String[movieList.length];
+
+        if (moviesData.movieList.length == 0) {
+            movieNamesList = new String[1];
+            movieNamesList[0] = getString(R.string.NoMoviesFound);
+        } else {
+            movieNamesList = new String[movieList.length];
+        }
 
         // Populate spinner array with list of movie titles
         for (int index = 0; index < movieList.length; index++) {
@@ -107,6 +139,11 @@ public class MainActivity extends Activity {
         movieListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (moviesData.movieList.length == 0) {
+                    movieDetailsListView.setAdapter(null);
+                    return;
+                }
 
                 int numberOfShowtimes = 1;
                 if (!movieList[position].showtimes.isEmpty()) {

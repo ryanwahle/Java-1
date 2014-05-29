@@ -86,7 +86,7 @@ public class Helper {
             Log.v("RESPONSE", response);
 
         } catch (IOException e) {
-            response = "Something happened and we didn't get the info";
+            response = "[]";
             Log.e("getResponse", "Something went wrong");
         }
 
