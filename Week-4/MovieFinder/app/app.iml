@@ -70,7 +70,11 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="Showtimes" level="project" />
+    <orderEntry type="library" exported="" name="Movies" level="project" />
     <orderEntry type="library" exported="" name="theaterlisting" level="project" />
+    <orderEntry type="library" exported="" name="Movie" level="project" />
+    <orderEntry type="library" exported="" name="Helper" level="project" />
   </component>
 </module>
 

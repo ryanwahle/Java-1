@@ -21,4 +21,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files('libs/theaterlisting.jar')
+    compile files('libs/Helper.jar')
+    compile files('libs/Movie.jar')
 }
