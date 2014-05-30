@@ -131,7 +131,7 @@ public class MainActivity extends Activity {
             movieNamesList[index] = movieList[index].movie_name;
         }
 
-        ArrayAdapter<String> spinnerAdaptor = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, movieNamesList);
+        ArrayAdapter<String> spinnerAdaptor = new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line, movieNamesList);
         spinnerAdaptor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         movieListSpinner.setAdapter(spinnerAdaptor);
 
@@ -150,15 +150,14 @@ public class MainActivity extends Activity {
                     numberOfShowtimes = movieList[position].showtimes.size();
                 }
 
-                String[] movieDetailsList = new String[3 + numberOfShowtimes];
-                movieDetailsList[0] = "Name: " + movieList[position].movie_name;
-                movieDetailsList[1] = "Length: " + movieList[position].movie_length;
-                movieDetailsList[2] = "Rated: " + movieList[position].rating;
+                String[] movieDetailsList = new String[2 + numberOfShowtimes];
+                movieDetailsList[0] = movieList[position].movie_length;
+                movieDetailsList[1] = "Rated - " + movieList[position].rating;
 
                 if (movieList[position].showtimes.isEmpty()) {
-                    movieDetailsList[4] = "No Showtimes";
+                    movieDetailsList[2] = "No Showtimes";
                 } else {
-                    int movieDetailsListIndex = 3;
+                    int movieDetailsListIndex = 2;
                     for (Showtimes showtimeObject : movieList[position].showtimes) {
                         movieDetailsList[movieDetailsListIndex++] = String.format("%s - %s", showtimeObject.theaterName, showtimeObject.movieShowtimes);
                     }
